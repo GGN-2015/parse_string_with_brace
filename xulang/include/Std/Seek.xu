@@ -1,0 +1,22 @@
+#include Num.xu
+#include Array.xu
+
+(Seek.Length ()) => (0)
+(Seek.Length (a *b)) => (Num.AddOne (Seek.Length (*b)))
+
+(Seek.Get (*pos) ()) => (Seek.Error.Nothing)
+(Seek.Get (0) (*arr)) => (Array.Head (*arr))
+(Seek.Get (*pos) (*arr)) => (Seek.Get (Num.SubOne (*pos)) (Array.Body (*arr)))
+
+(Seek.Front (0) (*arr)) => ()
+(Seek.Front (*cnt) ()) => ()
+(Seek.Front (*cnt) (a *b)) => (Array.Merge (a) (Seek.Front (Num.SubOne (*cnt)) (*b)))
+
+(Seek.Back (*cnt) (*arr)) => (Array.Rev (Seek.Front (*cnt) (Array.Rev (*arr))))
+
+(Seek.Put (*idx) new_val ()) => (new_val)
+(Seek.Put (0) new_val (a *b)) => (new_val *b) 
+(Seek.Put (*idx) new_val (a *b)) => (Array.Merge (a) (Seek.Put (Num.SubOne (*idx)) new_val (*b)))
+
+(Seek.GenArr (0) dup_val) => ()
+(Seek.GenArr (*cnt) dup_val) => (Array.Merge (dup_val) (Seek.Gen (Num.SubOne (*cnt)) dup_val))

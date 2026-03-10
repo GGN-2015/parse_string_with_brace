@@ -37,8 +37,13 @@ def split_include_path(argv_list:list[str]) -> tuple[list[str], list[str]]:
 def main(argv_list:list[str]) -> int:
     argv_list, inlcude_path_list = split_include_path(argv_list)
 
+    # 检查 --verbose
+    verbose = ("--verbose" in argv_list)
+    argv_list = [item for item in argv_list if item != "--verbose"]
+
     try:
         file_runner = FileRunner(inlcude_path_list)
+        file_runner.verbose = verbose
     except Exception as e:
         print("<CMD>:1", e)
         return 1

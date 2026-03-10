@@ -11,6 +11,14 @@ except:
     from ValueMap import ValueMap
     from ValueTerm import ValueTerm
 
+# 当前目录
+DIRNOW = os.path.dirname(
+    os.path.abspath(__file__))
+
+# 标准库的 include 文件
+INCLUDE_DIR = os.path.join(DIRNOW, 
+    "include")
+
 class CommandWrap:
     def __init__(self, filepath:str, line_id:int, command:str) -> None:
         self.filepath = filepath
@@ -48,7 +56,13 @@ class FileRunner:
         #   而不是当前工作路径
         # self.include_path 中除了 "." 之外都是绝对路径
         self.include_path = ["."] + [
-            os.path.abspath(path) for path in include_path_list]
+            os.path.abspath(path) for path in include_path_list] + [
+                INCLUDE_DIR] 
+        # 一定要把标准库放在最后
+        # 因为 include_path 越靠前优先级越高
+
+        # 用来记录，当前的运行模式是否是交互式的
+        self.interactive_cli = False
 
     # 返回值表示是否是第一次加载
     # 不是第一次加载时候跳过
@@ -96,7 +110,12 @@ class FileRunner:
             print("FROM:", cmd_now.command.strip()) # 特殊命令就输出一个原始命令就行
         
         # 分离命令头部和命令内容
-        first_part, other_part = cmd_now.command.split(maxsplit=1)
+        try:
+            first_part, other_part = cmd_now.command.split(maxsplit=1)
+            first_part = first_part.strip()
+        except:
+            first_part = cmd_now.command.strip()
+            other_part = ""
         assert first_part.startswith("#")
         first_part = first_part[1:]
 
@@ -111,6 +130,14 @@ class FileRunner:
             new_filepath = os.path.abspath(os.path.join(dirnow, rel_filepath))
             self.include_file(new_filepath.strip())
 
+        elif first_part == "exit":   # 直接停止程序
+            self.cmd_list.clear()    # 通过清空后续代码的方式停止程序 (文件模式)
+
+            # 如果是交互式命令行模式，则输出再见
+            if self.interactive_cli: 
+                # 注意，交互式命令行只有在读取文件中的 #exit 时才会遇到这种情况
+                print(f"Bye. \n(#exit from {cmd_now.filepath}:{cmd_now.line_id})")
+            self.interactive_cli = False 
         else:
             raise ValueError(f"Special command \"#{first_part}\" not found!")
 
@@ -169,16 +196,22 @@ class FileRunner:
     
     # 启动一个交互式用户界面
     def interactive_ui(self):
-        line_id = 0
-        while True:
-            line_id += 1
+        self.interactive_cli = True # 表示进入交互式命令模式
+        line_id = 1
+
+        # 文件中的 exit 命令通过 self.interactive_cli = False 退出交互式命令行
+        while self.interactive_cli: 
 
             try:
                 cmd = input(">>> ").strip()
                 if cmd == "#exit": # 退出执行
-                    print("Bye.")
+                    print(f"Bye. \n(#exit from <STDIN>:{line_id})")
                     break
                 self.cmd_list.append(CommandWrap("<STDIN>", line_id, cmd.strip()))
+
+                # 空行和注释不增加编号
+                if cmd.strip() == "" or cmd.strip().startswith("//"):
+                    continue
 
                 try:
                     # 执行所有出现的命令，直到无法执行为止
@@ -186,10 +219,20 @@ class FileRunner:
                 except Exception as e:    # 遇到报错，输出错误信息
                     print(e)              # 当出现报错时，清空命令区域
                     self.cmd_list.clear() # 后续可以继续交互
-            
-            except:
+                
+                # 只有在正确执行时编号才增加
+                line_id += 1
+            except KeyboardInterrupt:
                 print("\nKeyboardInterrupt")
                 print("Use #exit to quit xulang interactive CLI.")
+            except Exception as e:
+                if str(e) == "": # 如果没有错误信息
+                    traceback.print_exc()
+                else: # 有错误信息则输出错误信息
+                    print(f"<STDIN>:{line_id} {type(e).__name__}: {str(e)}")
+        
+        # 退出交互模式
+        self.interactive_cli = False
 
     def run_file(self, filepath:str):
         self.include_file(filepath)

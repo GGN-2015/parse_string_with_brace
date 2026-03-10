@@ -1,0 +1,19 @@
+(Array.Head ()) => (Array.Error.Empty)
+(Array.Head (a *b)) => a
+
+(Array.Body ()) => ()
+(Array.Body (a *b)) => (*b)
+
+(Array.Empty ()) => TRUE
+(Array.Empty (a *b)) => FALSE
+
+(Array.Merge (*a) (*b)) => (*a *b)
+
+(Array.Rev ()) => ()
+(Array.Rev (a *b)) => (Array.Merge (Array.Rev (*b)) (a))
+
+(Array.Tail ()) => (Array.Error.Empty)
+(Array.Tail (*a)) => (Array.Head (Array.Rev (*a)))
+
+(Array.RevAll ()) => ()
+(Array.RevAll (a *b)) => (Array.Merge ((Array.Rev a)) (Array.RevAll (*b)))

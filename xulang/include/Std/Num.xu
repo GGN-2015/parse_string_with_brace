@@ -1,0 +1,70 @@
+#include Array.xu
+#include Logic.xu
+
+(Num.Zero) => (0)
+
+(Num.IsZero (0)) => TRUE
+(Num.IsZero (*a)) => FALSE
+
+(Num.DigitAddOne 0) => 1
+(Num.DigitAddOne 1) => 2 
+(Num.DigitAddOne 2) => 3 
+(Num.DigitAddOne 3) => 4 
+(Num.DigitAddOne 4) => 5 
+(Num.DigitAddOne 5) => 6 
+(Num.DigitAddOne 6) => 7 
+(Num.DigitAddOne 7) => 8 
+(Num.DigitAddOne 8) => 9 
+(Num.DigitAddOne 9) => 0 
+
+(Num.AddOne (9)) => (0 1)
+(Num.AddOne (a)) => ((Num.DigitAddOne a))
+(Num.AddOne (9 *b)) => (Array.Merge (0) (Num.AddOne (*b)))
+(Num.AddOne (a *b)) => (Array.Merge ((Num.DigitAddOne a)) (*b))
+
+(Num.DigitSubOne 0) => 9
+(Num.DigitSubOne 1) => 0
+(Num.DigitSubOne 2) => 1
+(Num.DigitSubOne 3) => 2
+(Num.DigitSubOne 4) => 3
+(Num.DigitSubOne 5) => 4
+(Num.DigitSubOne 6) => 5
+(Num.DigitSubOne 7) => 6
+(Num.DigitSubOne 8) => 7
+(Num.DigitSubOne 9) => 8
+
+(Num.DelHeadZero (0 *a)) => (*a)
+(Num.DelHeadZero (*a)) => (*a)
+(Num.DelTailZero (*a)) => (Array.Rev (Num.DelHeadZero (Array.Rev (*a))))
+
+(Num.SubOne (0)) => (0)
+(Num.SubOne (a)) => ((Num.DigitSubOne a))
+(Num.SubOne (0 *b)) => (Num.DelTailZero (Array.Merge (9) (Num.SubOne (*b))))
+(Num.SubOne (a *b)) => ((Num.DigitSubOne a) *b)
+
+(Num.Add (0) (*a)) => (*a)
+(Num.Add (*a) (*b)) => (Num.Add (Num.SubOne (*a)) (Num.AddOne (*b)))
+
+(Num.Sub (*a) (0)) => (*a)
+(Num.Sub (*a) (*b)) => (Num.Sub (Num.SubOne (*a)) (Num.SubOne (*b)))
+
+(Num.Mul (*a) (0)) => (0)
+(Num.Mul (*a) (*b)) => (Num.Add (Num.Mul (*a) (Num.SubOne (*b))) (*a))
+
+(Num.Leq (0) (*a)) => TRUE
+(Num.Leq (0) (0)) => TRUE
+(Num.Leq (*a) (0)) => FALSE
+(Num.Leq (*a) (*b)) => (Num.Leq (Num.SubOne (*a)) (Num.SubOne (*b)))
+
+(Num.Lt (*a) (*b)) => (Logic.Not (Num.Leq (*b) (*a)))
+(Num.Gt (*a) (*b)) => (Num.Lt (*b) (*a))
+(Num.Geq (*a) (*b)) => (Num.Leq (*b) (*a))
+(Num.Equ (*a) (*b)) => (Logic.And (Num.Leq (*a) (*b)) (Num.Leq (*b) (*a)))
+(Num.Neq (*a) (*b)) => (Logic.Not (Num.Equ (*a) (*b)))
+
+(Num.Div (*a) (0)) => (Num.Error.DivZero)
+(Num.Div (*a) (*b)) => (Logic.If (Num.Lt (*a) (*b)) (0) (Num.AddOne (Num.Div (Num.Sub (*a) (*b)) (*b))))
+
+(Num.Mod (*a) (0)) => (0)
+(Num.Mod (0) (*a)) => (0)
+(Num.Mod (*a) (*b)) => (Num.Sub (*a) (Num.Mul (Num.Div (*a) (*b)) (*b)))

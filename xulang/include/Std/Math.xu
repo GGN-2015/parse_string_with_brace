@@ -1,0 +1,12 @@
+#include Num.xu
+
+(Math.ModCheck (*x) (*val_now)) => (Num.Neq (0) (Num.Mod (*x) (*val_now)))
+(Math.IsPrimeCheck (*x) (*val_now)) => (Logic.If (Num.Gt (Num.Mul (*val_now) (*val_now)) (*x)) TRUE (Logic.And (Math.ModCheck (*x) (*val_now)) (Math.IsPrimeCheck (*x) (Num.AddOne (*val_now)))))
+
+(Math.IsPrime (0)) => FALSE
+(Math.IsPrime (1)) => FALSE
+(Math.IsPrime (2)) => TRUE
+(Math.IsPrime (*x)) => (Math.IsPrimeCheck (*x) (2))
+
+(Math.PrimeTable (0)) => ()
+(Math.PrimeTable (*max_val)) => (Array.Merge (Math.PrimeTable (Num.SubOne (*max_val))) (Logic.If (Math.IsPrime (*max_val)) ((*max_val)) ()))

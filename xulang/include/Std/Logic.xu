@@ -1,0 +1,14 @@
+(Logic.If TRUE  a b) => a
+(Logic.If FALSE a b) => b
+
+(Logic.And TRUE  a) => a
+(Logic.And FALSE a) => FALSE
+
+(Logic.Or  TRUE  a) => TRUE
+(Logic.Or  FALSE a) => a
+
+(Logic.Not TRUE ) => FALSE
+(Logic.Not FALSE) => TRUE
+
+(Logic.Xor TRUE  a) => (Logic.Not a)
+(Logic.Xor FALSE a) => a
