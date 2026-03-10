@@ -58,6 +58,10 @@ class ValueTerm:
             new_item.value = BraceSequence.from_json_obj(value_json_obj)
         return new_item
     
+    # 检查一个序列是不是完全由常量构成
+    def all_const(self) -> bool:
+        return self.value.all_const()
+    
 if __name__ == "__main__":
     test_list = [
         "[]",            # 没有元素 Sequence

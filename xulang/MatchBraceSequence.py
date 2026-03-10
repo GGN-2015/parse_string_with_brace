@@ -32,7 +32,7 @@ def match_brace_sequence(
     index = 0
     while index < len(tmp_seq):
         if isinstance(tmp_seq[index], SimpleTerm):
-            if SimpleTerm.is_upper(tmp_seq[index].serialize()): # 强制匹配
+            if SimpleTerm.is_const_val(tmp_seq[index].serialize()): # 强制匹配
                 if index >= len(txt_seq): # 强制匹配时长度不足
                     return False
                 elif tmp_seq[index].serialize() != txt_seq[index].serialize(): # 匹配失败
@@ -42,7 +42,7 @@ def match_brace_sequence(
                     pass # 成功匹配一个项目
             
             elif tmp_seq[index].has_star: # 匹配后面全部内容
-                if SimpleTerm.is_upper(tmp_seq[index].serialize()[1:]):
+                if SimpleTerm.is_const_val(tmp_seq[index].serialize()[1:]):
                     raise ValueError()
 
                 # 通配符只能出现在右括号前

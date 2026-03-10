@@ -68,7 +68,7 @@ class RuleSet:
             if type(sub_obj_list[i]) not in [BraceSequence, Sequence] or suc:
                 new_sub_obj_list.append(sub_obj_list[i])
                 continue
-            flag, new_obj = self.calc(ValueTerm.init(sub_obj_list[i]))
+            flag, new_obj = self.calc_once(ValueTerm.init(sub_obj_list[i]))
 
             if isinstance(new_obj.value, BraceSequence):
                 new_sub_obj_list.append(new_obj.value)
@@ -88,8 +88,24 @@ class RuleSet:
                 Sequence.init(new_sub_obj_list)
             )
 
+    # 计算一个表达式的最终结果
+    # verbose 模式可以显示计算过程
+    def calc(self, value_term:ValueTerm, verbose:bool) -> ValueTerm:
+        if verbose:
+            print("FROM:", value_term.serialize()[1:-1])
+        while True:
+            flag, value_term = self.calc_once(value_term)
+            if flag == False:
+                break
+            if self.latest_used_rule is not None:
+                if verbose:
+                    print("\nRULE:", self.latest_used_rule.serialize())
+            if verbose:
+                print("OUTP:", value_term.serialize()[1:-1])
+        return value_term
+
     # 使用当前规则集合进行必要的计算
-    def calc(self, value_term:ValueTerm) -> tuple[bool, ValueTerm]:
+    def calc_once(self, value_term:ValueTerm) -> tuple[bool, ValueTerm]:
 
         if type(value_term.value) not in [Sequence, BraceSequence]:
             raise TypeError()
@@ -166,11 +182,4 @@ if __name__ == "__main__":
         print("=" * 40)
         value_term = ValueTerm.deserialize(f"[{value_term_str}]")
         
-        print(value_term.serialize()[1:-1])
-        while True:
-            flag, value_term = rule_set.calc(value_term)
-            if flag == False:
-                break
-            if rule_set.latest_used_rule is not None:
-                print("\nRULE:", rule_set.latest_used_rule.serialize())
-            print("OUTP:", value_term.serialize()[1:-1])
+        

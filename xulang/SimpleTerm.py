@@ -19,7 +19,7 @@ class SimpleTerm:
                 ] + [
                     str(num_now) for num_now in range(10)
                 ]):
-                raise ValueError() # 字母数字下划线
+                raise ValueError(f"Illegal character '{msg[i]}'.") # 字母数字下划线
             
         new_item = SimpleTerm()
         new_item.content = msg
@@ -56,19 +56,16 @@ class SimpleTerm:
         return SimpleTerm.init(
             json_obj["content"], json_obj["has_star"])
     
-    # 由下划线和大写字母、数字构成，且至少包含一个大写字母或者数字
-    # 这样的元素强制匹配，不能当变量名
+    # 大写字母或者数字开头的符号串
+    # 视为常量
     @classmethod
-    def is_upper(cls, s:str) -> bool:
-        cnt_cap = 0
-        for c in s:
-            if c in string.ascii_uppercase or c in string.digits:
-                cnt_cap += 1
-            elif c != "_":
-                if c not in string.ascii_lowercase and c != "*":
-                    raise AssertionError()
-                return False
-        return cnt_cap >= 1
+    def is_const_val(cls, s:str) -> bool:
+        if s == "":
+            raise AssertionError()
+        return s[0] in string.ascii_uppercase or s[0] in string.digits
+    
+    def all_const(self) -> bool:
+        return SimpleTerm.is_const_val(self.serialize())
 
 if __name__ == "__main__":
     term = SimpleTerm.init("hello", False)

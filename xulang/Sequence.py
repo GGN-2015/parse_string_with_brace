@@ -74,7 +74,7 @@ class Sequence:
         index = 0
         while index < len(str_list):
             if str_list[index] == ")":
-                raise ValueError()
+                raise ValueError("Unexpected closing parenthesis.")
             elif str_list[index] == "(":
                 pos = find_match(str_list, index)
                 object_list.append(
@@ -119,3 +119,10 @@ class Sequence:
             if isinstance(item, BRACE_SEQUENCE_CLASS_META_OBJECT[0]):
                 return True
         return False
+
+    # 检查一个序列是不是完全由常量构成
+    def all_const(self) -> bool:
+        ans = True
+        for term in self.objects:
+            ans = ans and term.all_const()
+        return ans

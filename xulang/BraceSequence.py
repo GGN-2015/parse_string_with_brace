@@ -31,7 +31,7 @@ class BraceSequence:
         if not s.startswith("("):
             raise ValueError()
         if not s.endswith(")"):
-            raise ValueError()
+            raise ValueError("Unterminated parenthetical expression.")
         new_obj = BraceSequence()
         new_obj.inner_sequence = Sequence.deserialize(s[1:-1])
         return new_obj
@@ -50,6 +50,10 @@ class BraceSequence:
     
     def has_sub_brace(self) -> bool:
         return self.inner_sequence.has_sub_brace()
+    
+    # 检查一个序列是不是完全由常量构成
+    def all_const(self) -> bool:
+        return self.inner_sequence.all_const()
 
 # 传参方式传递类型对象
 BRACE_SEQUENCE_CLASS_META_OBJECT[0] = BraceSequence # type: ignore

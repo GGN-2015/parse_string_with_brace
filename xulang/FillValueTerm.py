@@ -29,7 +29,7 @@ def fill_sequence(sequence:Sequence, dic:dict[str, Sequence]) -> Sequence:
         if isinstance(term, SimpleTerm):
             
             # 遇到变量
-            if not SimpleTerm.is_upper(term.serialize()):
+            if not SimpleTerm.is_const_val(term.serialize()):
                 if dic.get(term.serialize()) is None:
                     raise NameError()
                 
