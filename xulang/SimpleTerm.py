@@ -12,9 +12,17 @@ class SimpleTerm:
         if not isinstance(msg, str) or len(msg) == 0:
             raise TypeError()
         if msg == "_":
-            raise ValueError() # 不能只留一个下划线
+            raise ValueError('"_" is not an available identifier.') # 不能只留一个下划线
+        if msg == ".":
+            raise ValueError('"." is not an available identifier.') # 不能只留一个下划线
+        if msg.find("..") != -1:
+            raise ValueError('No consecutive dots in identifier.')
+        if msg.startswith("."):
+            raise ValueError('No leading dot in identifier.')
+        if msg.endswith("."):
+            raise ValueError("No trailing dot in identifier.")
         for i in range(len(msg)):
-            if msg[i] not in (["_"] + [
+            if msg[i] not in (["_", "."] + [
                     char_now for char_now in string.ascii_letters
                 ] + [
                     str(num_now) for num_now in range(10)

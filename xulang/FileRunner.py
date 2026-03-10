@@ -22,9 +22,6 @@ class FileRunner:
         # 记录已经被引入的所有路径
         self.exists_path:set[str] = set()
 
-        # 记录所有已经被执行的过的指令
-        self.executed_list:list[CommandWrap] = []
-
         # 记录所有还没有执行的指令
         self.cmd_list:list[CommandWrap] = []
 
@@ -80,8 +77,9 @@ class FileRunner:
             dirnow = self.get_dirnow(first_cmd.filepath)
             new_filepath = os.path.abspath(os.path.join(dirnow, other_part))
             self.include_file(new_filepath.strip())
+
         else:
-            raise ValueError(f"special command \"#{first_part}\" not found!")
+            raise ValueError(f"Special command \"#{first_part}\" not found!")
 
     # 执行指定的命令
     def execute_cmd(self, first_cmd:CommandWrap):
@@ -141,16 +139,24 @@ class FileRunner:
         line_id = 0
         while True:
             line_id += 1
-            cmd = input(">>> ").strip()
-            if cmd == "#quit": # 退出执行
-                break
-            self.cmd_list.append(CommandWrap("<STDIN>", line_id, cmd.strip()))
 
-            # 执行所有出现的命令，直到无法执行为止
             try:
-                self.execute_all()
-            except Exception as e: # 遇到报错，输出错误信息
-                print(e)
+                cmd = input(">>> ").strip()
+                if cmd == "#exit": # 退出执行
+                    print("Bye.")
+                    break
+                self.cmd_list.append(CommandWrap("<STDIN>", line_id, cmd.strip()))
+
+                try:
+                    # 执行所有出现的命令，直到无法执行为止
+                    self.execute_all()
+                except Exception as e:    # 遇到报错，输出错误信息
+                    print(e)              # 当出现报错时，清空命令区域
+                    self.cmd_list.clear() # 后续可以继续交互
+            
+            except:
+                print("\nKeyboardInterrupt")
+                print("Use #exit to quit xulang interactive CLI.")
 
     def run_file(self, filepath:str):
         self.include_file(filepath)

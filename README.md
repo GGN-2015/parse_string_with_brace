@@ -1,35 +1,49 @@
 # xulang
-小老鼠语言：一门极简、免记忆规则的编程语言。
+xulang: an ultra-minimalist programming language with zero memorization of rules required.
 
-## 词法单元
-常量：由字母、数字、下划线构成的、由数字或者大写字母开头的符号串。例如 `123`, `ABX_1`, `T` 等等。
-
-变量：由字母、数字、下划线构成的、由小写字母或者下划线开头。例如 `a`, `_name`, `_var1`。
-
-串匹配：以星号开头，其后紧接着一个变量名的字符串。例如：`*a`, `*_x`, `*v1`
-
-## 程序示例
+## Install
+```bash
+pip install xulang
 ```
-// 定义 IF 三目运算符（具有短路性）
+
+## Usage
+```bash
+# xulang interactive CLI
+python3 -m xulang
+
+# run file
+python3 -m xulang <filepath.xu>
+```
+
+## Lexical Units
+Constants: Character strings consisting of letters, digits, and underscores, starting with a digit or uppercase letter. Examples: `123`, `ABX_1`, `T`, etc.
+
+Variables: Character strings consisting of letters, digits, and underscores, starting with a lowercase letter or underscore. Examples: `a`, `_name`, `_var1`.
+
+String Matching: A string starting with an asterisk immediately followed by a variable name. Examples: `*a`, `*_x`, `*v1`.
+
+## Program Examples
+```
+// Define IF ternary operator (with short-circuit evaluation)
 (IF TRUE  a b) => a
 (IF FALSE a b) => b
 
-// 定义 MERGE: 合并任意两个序列
+// Define MERGE: merge any two sequences
 (MERGE (*a) (*b)) => (*a *b)
 
-// 定义 HEAD: 取非空序列首个元素
+// Define HEAD: get the first element of a non-empty sequence
 (HEAD (a *b)) => a
 
-// 定义 REV: 对任意序列进行翻转
+// Define REV: reverse any sequence
 (REV ()) => ()
 (REV (a *b)) => (MERGE (REV (*b)) (a))
 
-// 定义 TAIL: 求非空序列的尾部元素
+// Define TAIL: get the last element of a non-empty sequence
 (TAIL (*a)) => (HEAD (REV (*a)))
 
-// 运行程序（计算结果为 E）
+// Run program (result is E)
 (IF FALSE X (TAIL (A B C D E)))
 
-// 运行程序（计算结果为 1）
+// Run program (result is 1)
 (IF TRUE 1 (TAIL (A B C D E)))
 ```
