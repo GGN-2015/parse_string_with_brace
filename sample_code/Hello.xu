@@ -1,2 +1,4 @@
 // Just output Hello World
+// Every word you want to output should begin with number or capital letter
+// Or-else they may be regarded as variable
 Hello World

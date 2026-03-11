@@ -29,6 +29,7 @@ Variables: Character strings consisting of letters, digits, and underscores, sta
 List Matching: A string starting with an asterisk immediately followed by a variable name. Examples: `*a`, `*_x`, `*v1`.
 
 ## Program Examples
-See `./sample_code/*.xu` on .
+See `./sample_code/*.xu` on [https://github.com/GGN-2015/py_xulang](https://github.com/GGN-2015/py_xulang).
 
 ## Standard Libarary
+See `./xulang/include/Std/*.xu` on [https://github.com/GGN-2015/py_xulang](https://github.com/GGN-2015/py_xulang).
