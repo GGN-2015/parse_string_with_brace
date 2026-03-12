@@ -63,4 +63,45 @@ Finally, `(Head (A B C D E))` successfully matches `(Head (a *b))`, where `a` ma
 
 Note that to avoid ambiguous matches, Xulang syntax requires that sequence match symbols must appear at the end of a parenthesized expression.
 
-#### Reverse a List
+#### Merge two List
+
+Try this sample in Xulang interpretor:
+```
+(Merge (*a) (*b)) => (*a *b)
+
+// calculate expression
+(Merge (A B C) (D E F))
+```
+
+The program will output `(A B C D E F)` which is the merged list of `(A B C)` and `(D E F)`.
+
+During the matching process, `(Merge (A B C) (D E F))` successfully matches the pattern `(Merge (*a) (*b))`, where `*a` matches the sequence `A B C` and `*b` matches the sequence `D E F`. In the result `(*a *b)`, the matched results of `*a` and `*b` are expanded and substituted into the result expression.
+
+### Reverse a List
+
+Try this sample in Xulang interpretor:
+```
+// rules
+(Merge (*a) (*b)) => (*a *b)
+(Rev ()) => ()
+(Rev (a)) => (a)
+(Rev (a *b)) => (Merge (Rev (*b)) (a))
+
+// expression
+(Rev (A B C D E))
+```
+
+After execution the program will output `(E D C B A)`. The computation process is listed as follows:
+
+1. `(Rev (A B C D E))`
+2. `(Merge (Rev (B C D E)) (A))`
+3. `(Merge (Merge (Rev (C D E)) (B)) (A))`
+4. `(Merge (Merge (Merge (Rev (D E)) (C)) (B)) (A))`
+5. `(Merge (Merge (Merge (Merge (Rev (E)) (D)) (C)) (B)) (A))`
+6. `(Merge (Merge (Merge (Merge (E) (D)) (C)) (B)) (A))`
+7. `(Merge (Merge (Merge (E D) (C)) (B)) (A))`
+8. `(Merge (Merge (E D C) (B)) (A))`
+9. `(Merge (E D C B) (A))`
+10. `(E D C B A)`
+
+If you are curious about the substitution process, use `python3 -m xulang --verbose` to see every step.
