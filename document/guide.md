@@ -164,3 +164,16 @@ FALSE
 ```
 
 Since `(MatchA A) => TRUE` is infront of `(MatchA a) => FALSE`, when both of the pattern matched, the first one will be in priority.
+
+### Same Symbol Check
+
+In a match pattern, the same match symbol can only match with the same sequence, for example:
+```
+(SameSymbol a a) => TRUE
+(SameSymbol a b) => FALSE
+
+(SameSymbol A A)
+(SameSymbol A B)
+```
+
+In the program above `(SameSymbol A A)` can both match with `(SameSymbol a a)` and `(SameSymbol a b)`, while `(SameSymbol a a)` comes the first, the result of `(SameSymbol A A)` is `TRUE`. `(SameSymbol A B)` can not match with `(SameSymbol a a)` since in that case `a` will have two different value `A` and `B`.

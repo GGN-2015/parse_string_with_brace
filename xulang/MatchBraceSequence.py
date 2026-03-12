@@ -56,11 +56,16 @@ def match_brace_sequence(
                 for i in range(index, len(txt_seq)):
                     arr.append(txt_seq[i])
 
-                # 变量名重复
-                if dic.get(tmp_seq[index].serialize()) is not None:
-                    raise ValueError()
+                # 匹配到的内容
+                sequence_value = Sequence.init(arr)
 
-                dic[tmp_seq[index].serialize()] = Sequence.init(arr)
+                # 变量名重复
+                # 重复的变量名一定只能匹配相同的内容
+                if dic.get(tmp_seq[index].serialize()) is not None:
+                    if dic[tmp_seq[index].serialize()].serialize() != sequence_value.serialize():
+                        return False
+
+                dic[tmp_seq[index].serialize()] = sequence_value
                 return True
             
             # 匹配单个符号的变量，恰好可以匹配一个常量符号或者一个括号对象
@@ -72,15 +77,17 @@ def match_brace_sequence(
                 if index >= len(txt_seq):
                     return False
                 
-                # 变量名重复
-                if dic.get(tmp_seq[index].serialize()) is not None:
-                    raise ValueError()
-                
+                # 构建匹配得到的序列
                 # 这里即使是一个元素，也应该是序列
-                dic[tmp_seq[index].serialize()] = Sequence.init([
-                    txt_seq[index]
-                ])
+                new_sequence_value = Sequence.init([txt_seq[index]])
 
+                # 变量名重复
+                # 重复的变量名一定只能匹配相同的内容
+                if dic.get(tmp_seq[index].serialize()) is not None:
+                    if dic[tmp_seq[index].serialize()].serialize() != new_sequence_value.serialize():
+                        return False
+                
+                dic[tmp_seq[index].serialize()] = new_sequence_value
                 index += 1
                 pass # 成功匹配了一个条目
             
