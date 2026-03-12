@@ -63,7 +63,8 @@ During the evaluation of `(Head (A B C D E))`, the pattern `(Head ())` fails to 
 
 Finally, `(Head (A B C D E))` successfully matches `(Head (a *b))`, where `a` matches `A` and `*b` matches `B C D E`. According to the `<Result>` of the current matching rule, we take the value matched by `a` as the final result.
 
-Note that to avoid ambiguous matches, Xulang syntax requires that sequence match symbols must appear at the end of a parenthesized expression.
+> [!IMPORTANT]
+> Note that to avoid ambiguous matches, Xulang syntax requires that sequence match symbols must appear at the end of a parenthesized expression.
 
 #### Merge two List
 
@@ -110,7 +111,8 @@ If you are curious about the substitution process, use `python3 -m xulang --verb
 
 Although this execution process appears to be a recursive function, it is essentially just the result of multiple matches and substitutions.
 
-Under normal circumstances, when there are multiple levels of nested parentheses, we always attempt to match the **inner parentheses first**. Matching on the outer parentheses is only attempted when no further matches can be made in the inner parentheses.
+> [!IMPORTANT]
+> Under normal circumstances, when there are multiple levels of nested parentheses, we always attempt to match the **inner parentheses first**. Matching on the outer parentheses is only attempted when no further matches can be made in the inner parentheses.
 
 For example, at the stage of `(Merge (Rev (B C D E)) (A))`, this expression could match `(Merge (*a) (*b))` as follows: `*a` matches `Rev (B C D E)` (note that `(B C D E)` is treated as a single element at this point, and `Rev` is regarded as a constant symbol), while `*b` matches `A`. However, since the matching of the inner expression `(Rev (B C D E))` has not yet completed, the match against `(Merge (*a) (*b))` will not be performed.
 
