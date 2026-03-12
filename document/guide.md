@@ -77,7 +77,7 @@ The program will output `(A B C D E F)` which is the merged list of `(A B C)` an
 
 During the matching process, `(Merge (A B C) (D E F))` successfully matches the pattern `(Merge (*a) (*b))`, where `*a` matches the sequence `A B C` and `*b` matches the sequence `D E F`. In the result `(*a *b)`, the matched results of `*a` and `*b` are expanded and substituted into the result expression.
 
-### Reverse a List
+#### Reverse a List
 
 Try this sample in Xulang interpretor:
 ```
@@ -111,3 +111,7 @@ Although this execution process appears to be a recursive function, it is essent
 Under normal circumstances, when there are multiple levels of nested parentheses, we always attempt to match the **inner parentheses first**. Matching on the outer parentheses is only attempted when no further matches can be made in the inner parentheses.
 
 For example, at the stage of `(Merge (Rev (B C D E)) (A))`, this expression could match `(Merge (*a) (*b))` as follows: `*a` matches `Rev (B C D E)` (note that `(B C D E)` is treated as a single element at this point, and `Rev` is regarded as a constant symbol), while `*b` matches `A`. However, since the matching of the inner expression `(Rev (B C D E))` has not yet completed, the match against `(Merge (*a) (*b))` will not be performed.
+
+#### Summary
+
+In Xulang's matching rules, parentheses can only match parentheses. If no parentheses are written in the pattern, a match symbol itself can match either a parenthesized expression or a constant symbol. When an expression contains nested parentheses, inner matches are evaluated first if available; only when no inner match exists will an attempt be made to match the outer parentheses. When multiple matching rules are applicable, the rule defined earlier takes precedence. Later rules are only tried if the earlier ones fail to match.
