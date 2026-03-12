@@ -46,7 +46,7 @@ In `<Result>`, you can use the match sybmols defined in `<Pattern>` to use its m
 
 #### Get First Element in List
 
-Try this sample in Xulang interpretor:
+Try this sample in Xulang interpreter:
 ```
 // define three match rules, where "Head" is a constant symbol.
 (Head ()) => 
@@ -68,7 +68,7 @@ Finally, `(Head (A B C D E))` successfully matches `(Head (a *b))`, where `a` ma
 
 #### Merge two List
 
-Try this sample in Xulang interpretor:
+Try this sample in Xulang interpreter:
 ```
 (Merge (*a) (*b)) => (*a *b)
 
@@ -82,7 +82,7 @@ During the matching process, `(Merge (A B C) (D E F))` successfully matches the 
 
 #### Reverse a List
 
-Try this sample in Xulang interpretor:
+Try this sample in Xulang interpreter:
 ```
 // rules
 (Merge (*a) (*b)) => (*a *b)
