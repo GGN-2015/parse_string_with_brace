@@ -59,6 +59,9 @@ class FileRunner:
         # 当前指令执行是否需要输出（手动设置为 True 可以执行命令时显示执行路径）
         self.verbose = False
 
+        # 设置单步暂停模式
+        self.step_mode = False
+
         # 报错是否需要打开源代码位置信息
         self.extra_error_info = False
 
@@ -66,11 +69,11 @@ class FileRunner:
         #   这里的 "." 是一个特殊路径，表示被运行的脚本所在的目录
         #   而不是当前工作路径
         # self.include_path 中除了 "." 之外都是绝对路径
+        # 一定要把标准库 INCLUDE_DIR 放在最后
+        #   因为 include_path 越靠前优先级越高（优先级最高的永远是相对路径 include）
         self.include_path = ["."] + [
             os.path.abspath(path) for path in include_path_list] + [
                 INCLUDE_DIR] 
-        # 一定要把标准库放在最后
-        # 因为 include_path 越靠前优先级越高
 
         # 用来记录，当前的运行模式是否是交互式的
         self.interactive_cli = False
@@ -249,7 +252,7 @@ class FileRunner:
             dic = dict()
             value_term = ValueTerm()     # 构建一个恰好包含一个 BraceSequence 的 ValueTerm
             value_term.value = brace_seq # type:ignore
-            value_term = self.rule_set.calc(value_term, self.verbose)
+            value_term = self.rule_set.calc(value_term, self.verbose, self.step_mode)
 
             # 看前面给出的模板是否能和后面的内容匹配
             if isinstance(value_term.value, BraceSequence):
@@ -396,7 +399,7 @@ class FileRunner:
                 value_term = ValueTerm.deserialize(f"[{first_cmd.command.strip()}]")
                 if value_term.get_one_var() is not None:
                     raise ValueError(f"No variables (like \"{value_term.get_one_var()}\") allowed in the current expression.")
-                new_value_term = self.rule_set.calc(value_term, self.verbose)
+                new_value_term = self.rule_set.calc(value_term, self.verbose, self.step_mode)
                 print(new_value_term.serialize().strip()[1:-1]) # 输出前去掉中括号
 
     # 执行一条命令

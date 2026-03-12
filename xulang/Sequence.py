@@ -36,7 +36,7 @@ def find_match(str_list:list[str], index:int):
             pos = j
             break
     if pos == -1:
-        raise ValueError() # 没有找到匹配的括号
+        raise ValueError("Unpaired parenthesis.") # 没有找到匹配的括号
     return pos
 
 BRACE_SEQUENCE_CLASS_META_OBJECT = [None]

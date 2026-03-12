@@ -218,7 +218,7 @@ class RuleSet:
 
     # 计算一个表达式的最终结果
     # verbose 模式可以显示计算过程
-    def calc(self, value_term:ValueTerm, verbose:bool) -> ValueTerm:
+    def calc(self, value_term:ValueTerm, verbose:bool, step_mode:bool) -> ValueTerm:
         if verbose:
             print("FROM:", value_term.serialize()[1:-1])
         while True:
@@ -230,6 +230,8 @@ class RuleSet:
                     print("\nRULE:", self.latest_used_rule.value_map.serialize())
             if verbose:
                 print("OUTP:", value_term.serialize()[1:-1])
+                if step_mode:
+                    input("(Continue?) ") # press enter to continue
         return value_term
 
     # 使用当前规则集合进行必要的计算
@@ -314,4 +316,4 @@ if __name__ == "__main__":
     ]:
         print("=" * 40)
         value_term = ValueTerm.deserialize(f"[{value_term_str}]")
-        rule_set.calc(value_term, True)
+        rule_set.calc(value_term, True, False)

@@ -3,43 +3,57 @@
 #include Std/Seek.xu
 #include Std/Select.xu
 
-(Sort.SortInt ()) => ()
-(Sort.SortInt (a)) => (a)
-(Sort.SortInt (a b)) => \
-(Logic.If               \
-    (Num.Lt a b)        \
-    (a b)               \
-    (b a)               \
-)
-(Sort.SortInt (a b c)) =>                        \
-(Logic.If                                        \
-    (Logic.And (Num.Leq a b) (Num.Leq a c))      \
-    (Array.Merge (a) (Sort.SortInt (b c)))       \
-    (Logic.If                                    \
-        (Logic.And (Num.Leq b a) (Num.Leq b c))  \
-        (Array.Merge (b) (Sort.SortInt (a c)))   \
-        (Array.Merge (c) (Sort.SortInt (a b)))   \
-    )                                            \
+// ${FINAL_NAME} is the fianl name of a sort function
+// ${LEQ_NAME} is the name of predefined compare function
+#define CREATE_SORT_FUNCTION   \
+(${FINAL_NAME} ()) => ()     \n\
+(${FINAL_NAME} (a)) => (a)   \n\
+(${FINAL_NAME} (a b)) =>       \
+(Logic.If                      \
+    (${LEQ_NAME} a b)          \
+    (a b)                      \
+    (b a)                      \
+)                            \n\
+(${FINAL_NAME} (a b c)) =>                                \
+(Logic.If                                                 \
+    (Logic.And (${LEQ_NAME} a b) (${LEQ_NAME} a c))       \
+    (Array.Merge (a) (${FINAL_NAME} (b c)))               \
+    (Logic.If                                             \
+        (Logic.And (${LEQ_NAME} b a) (${LEQ_NAME} b c))   \
+        (Array.Merge (b) (${FINAL_NAME} (a c)))           \
+        (Array.Merge (c) (${FINAL_NAME} (a b)))           \
+    )                                                     \
+)                                                       \n\
+(${FINAL_NAME}.Mid3 (a b c)) =>                           \
+    (Seek.Get (1) (${FINAL_NAME} (a b c)))              \n\
+(${FINAL_NAME}.SelectLeq val ()) => ()    \n\
+(${FINAL_NAME}.SelectLeq val (a *arr)) =>   \
+(Array.Merge                                \
+    (Logic.If                               \
+        (${LEQ_NAME} a val)                 \
+        (a)                                 \
+        ()                                  \
+    )                                       \
+    (${FINAL_NAME}.SelectLeq val (*arr))    \
+)                                         \n\
+(${FINAL_NAME}.SelectGt val ()) => ()    \n\
+(${FINAL_NAME}.SelectGt val (a *arr)) =>   \
+(Array.Merge                               \
+    (Logic.If                              \
+        (Logic.Not (${LEQ_NAME} a val))    \
+        (a)                                \
+        ()                                 \
+    )                                      \
+    (${FINAL_NAME}.SelectGt val (*arr))    \
+)                                        \n\
+(${FINAL_NAME} (a b *arr)) =>                                                                           \
+(Array.Merge                                                                                            \
+    (${FINAL_NAME} (${FINAL_NAME}.SelectLeq (${FINAL_NAME}.Mid3 (a b (Array.Tail (*arr)))) (a b *arr))) \
+    (${FINAL_NAME} (${FINAL_NAME}.SelectGt  (${FINAL_NAME}.Mid3 (a b (Array.Tail (*arr)))) (a b *arr))) \
 )
 
-(Sort.MidTermInThree (a b c)) => (Seek.Get (1) (Sort.SortInt (a b c)))
-
-// CREATE_SELECT_FUNCTION_P1 is defined in "Std/Select.xu"
-#define FINAL_NAME     Sort.SelectLeq
-#define CONDITION_NAME Num.Leq
-${CREATE_SELECT_FUNCTION_P1}
+#define FINAL_NAME Sort.SortNum
+#define LEQ_NAME   Num.Leq
+${CREATE_SORT_FUNCTION}
 #undef FINAL_NAME
-#undef CONDITION_NAME
-
-// CREATE_SELECT_FUNCTION_P1 is defined in "Std/Select.xu"
-#define FINAL_NAME     Sort.SelectGt
-#define CONDITION_NAME Num.Gt
-${CREATE_SELECT_FUNCTION_P1}
-#undef FINAL_NAME
-#undef CONDITION_NAME
-
-(Sort.SortInt (a b *arr)) =>      \
-(Array.Merge                      \
-    (Sort.SortInt (Sort.SelectLeq (Sort.MidTermInThree (a b (Array.Tail (*arr)))) (a b *arr))) \
-    (Sort.SortInt (Sort.SelectGt  (Sort.MidTermInThree (a b (Array.Tail (*arr)))) (a b *arr))) \
-)
+#undef LEQ_NAME
